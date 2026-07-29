@@ -5,31 +5,67 @@
 import PencilKit
 import SwiftUI
 
-struct PKCanvas {
-    @Environment(\.toolPickerDisplayMode)
-    var toolPickerDisplayMode: PKToolPickerDisplayMode
-
+struct PKCanvas: View {
     @Binding
     private var drawing: PKDrawing
 
+    @Binding
+    private var selection: Set<UUID>
+
     private let onDrawEvent: (PKDrawEvent) -> Void
     private let onDrawingChange: (PKDrawing) -> Void
+    private let onSelectionChange: (Set<UUID>) -> Void
 
-    init(_ drawing: Binding<PKDrawing>) {
+    @State
+    private var defaultSelection: Set<UUID> = []
+
+    init(
+        _ drawing: Binding<PKDrawing>,
+    ) {
+        let state = State(initialValue: Set<UUID>())
+
+        self.init(
+            drawing,
+            selection: state.projectedValue,
+        )
+
+        _defaultSelection = state
+    }
+
+    init(
+        _ drawing: Binding<PKDrawing>,
+        selection: Binding<Set<UUID>>,
+    ) {
         self.init(
             drawing: drawing,
+            selection: selection,
             onDrawEvent: { _ in },
             onDrawingChange: { _ in },
+            onSelectionChange: { _ in },
         )
     }
 
     private init(drawing: Binding<PKDrawing>,
+                 selection: Binding<Set<UUID>>,
                  onDrawEvent: @escaping (PKDrawEvent) -> Void,
-                 onDrawingChange: @escaping (PKDrawing) -> Void)
+                 onDrawingChange: @escaping (PKDrawing) -> Void,
+                 onSelectionChange: @escaping (Set<UUID>) -> Void)
     {
         _drawing = drawing
+        _selection = selection
         self.onDrawEvent = onDrawEvent
         self.onDrawingChange = onDrawingChange
+        self.onSelectionChange = onSelectionChange
+    }
+
+    var body: some View {
+        _PKCanvas(
+            drawing: $drawing,
+            selection: $selection,
+            onDrawEvent: onDrawEvent,
+            onDrawingChange: onDrawingChange,
+            onSelectionChange: onSelectionChange,
+        )
     }
 }
 
@@ -37,21 +73,76 @@ extension PKCanvas {
     func onDraw(_ onDrawEvent: @escaping (PKDrawEvent) -> Void) -> Self {
         PKCanvas(
             drawing: _drawing,
+            selection: _selection,
             onDrawEvent: onDrawEvent,
             onDrawingChange: onDrawingChange,
+            onSelectionChange: onSelectionChange,
         )
     }
 
     func onDrawingChange(_ onDrawingChange: @escaping (PKDrawing) -> Void) -> Self {
         PKCanvas(
             drawing: _drawing,
+            selection: _selection,
             onDrawEvent: onDrawEvent,
             onDrawingChange: onDrawingChange,
+            onSelectionChange: onSelectionChange,
+        )
+    }
+
+    func onSelectionChange(_ onSelectionChange: @escaping (Set<UUID>) -> Void) -> Self {
+        PKCanvas(
+            drawing: _drawing,
+            selection: _selection,
+            onDrawEvent: onDrawEvent,
+            onDrawingChange: onDrawingChange,
+            onSelectionChange: onSelectionChange,
         )
     }
 }
 
-extension PKCanvas: UIViewRepresentable {
+private struct _PKCanvas {
+    @Environment(\.toolPickerDisplayMode)
+    var toolPickerDisplayMode: PKToolPickerDisplayMode
+
+    @Binding
+    private var drawing: PKDrawing
+
+    @Binding
+    private var selection: Set<UUID>
+
+    private let onDrawEvent: (PKDrawEvent) -> Void
+    private let onDrawingChange: (PKDrawing) -> Void
+    private let onSelectionChange: (Set<UUID>) -> Void
+
+    init(
+        _ drawing: Binding<PKDrawing>,
+        selection: Binding<Set<UUID>>,
+    ) {
+        self.init(
+            drawing: drawing,
+            selection: selection,
+            onDrawEvent: { _ in },
+            onDrawingChange: { _ in },
+            onSelectionChange: { _ in },
+        )
+    }
+
+    init(drawing: Binding<PKDrawing>,
+         selection: Binding<Set<UUID>>,
+         onDrawEvent: @escaping (PKDrawEvent) -> Void,
+         onDrawingChange: @escaping (PKDrawing) -> Void,
+         onSelectionChange: @escaping (Set<UUID>) -> Void)
+    {
+        _drawing = drawing
+        _selection = selection
+        self.onDrawEvent = onDrawEvent
+        self.onDrawingChange = onDrawingChange
+        self.onSelectionChange = onSelectionChange
+    }
+}
+
+extension _PKCanvas: UIViewRepresentable {
     func makeUIView(context: Self.Context) -> PKCanvasView {
         debugPrint(#function)
 
@@ -60,6 +151,7 @@ extension PKCanvas: UIViewRepresentable {
         let container = PKCanvasView(frame: .zero)
 
         container.drawing = drawing
+        container.selection = selection
 
         coordinator.canvasContainer = container
 
@@ -80,15 +172,20 @@ extension PKCanvas: UIViewRepresentable {
             canvas.drawing = drawing
         }
 
+        if canvas.selection != selection {
+            canvas.selection = selection
+        }
+
         invalidateToolPicker(canvas, context: context)
 
         debugPrint(#function)
     }
 
     func makeCoordinator() -> PKCanvasCoordinator {
-        PKCanvasCoordinator($drawing,
+        PKCanvasCoordinator($drawing, selection: $selection,
                             onDrawEvent: onDrawEvent,
-                            onDrawingChange: onDrawingChange)
+                            onDrawingChange: onDrawingChange,
+                            onSelectionChange: onSelectionChange)
     }
 
     static func dismantleUIView(_ canvas: PKCanvasView, coordinator: PKCanvasCoordinator) {
@@ -103,7 +200,7 @@ extension PKCanvas: UIViewRepresentable {
     }
 }
 
-private extension PKCanvas {
+private extension _PKCanvas {
     func invalidateToolPicker(_ canvas: PKCanvasView, context: Context) {
         let toolPicker = context.coordinator.toolPicker
 
@@ -127,7 +224,7 @@ private extension PKCanvas {
     }
 }
 
-final class PKCanvasCoordinator: NSObject, PKCanvasViewDelegate {
+private final class PKCanvasCoordinator: NSObject, PKCanvasViewDelegate {
     var canvasContainer: PKCanvasView!
 
     let toolPicker = PKToolPicker()
@@ -135,7 +232,10 @@ final class PKCanvasCoordinator: NSObject, PKCanvasViewDelegate {
     let onDrawEvent: (PKDrawEvent) -> Void
     let onDrawingChange: (PKDrawing) -> Void
 
+    let onSelectionChange: (Set<UUID>) -> Void
+
     private let drawing: Binding<PKDrawing>
+    private let selection: Binding<Set<UUID>>
 
     private var lastDrawEvent: PKDrawEvent = .init(
         previousLocation: .zero,
@@ -148,42 +248,37 @@ final class PKCanvasCoordinator: NSObject, PKCanvasViewDelegate {
     }
 
     init(_ drawing: Binding<PKDrawing>,
+         selection: Binding<Set<UUID>>,
          onDrawEvent: @escaping (PKDrawEvent) -> Void,
-         onDrawingChange: @escaping (PKDrawing) -> Void)
+         onDrawingChange: @escaping (PKDrawing) -> Void,
+         onSelectionChange: @escaping (Set<UUID>) -> Void)
     {
         self.onDrawEvent = onDrawEvent
         self.onDrawingChange = onDrawingChange
+        self.onSelectionChange = onSelectionChange
 
         self.drawing = drawing
+        self.selection = selection
     }
 
     func canvasViewDrawingDidChange(_ canvas: PKCanvasView) {
         debugPrint("\(#function) drawing:\(canvas.drawing.strokes)")
 
-        drawing.wrappedValue = canvas.drawing
+        if drawing.wrappedValue != canvas.drawing {
+            drawing.wrappedValue = canvas.drawing
+        }
 
         onDrawingChange(canvas.drawing)
     }
 
-    func canvasViewDidFinishRendering(_: PKCanvasView) {
+    func canvasViewSelectionDidChange(_ canvas: PKCanvasView) {
         debugPrint(#function)
-        // canvasObservation.proxy = PKCanvasProxy(canvasView)
-    }
 
-    func canvasViewDidBeginUsingTool(_ canvas: PKCanvasView) {
-        debugPrint("\(#function) drawing:\(canvas.drawing.strokes)")
+        if selection.wrappedValue != canvas.selection {
+            selection.wrappedValue = canvas.selection
+        }
 
-        // canvasObservation.proxy = PKCanvasProxy(canvasView)
-    }
-
-    func canvasViewDidEndUsingTool(_: PKCanvasView) {
-        debugPrint(#function)
-        // canvasObservation.proxy = PKCanvasProxy(canvasView)
-    }
-
-    func canvasViewSelectionDidChange(_: PKCanvasView) {
-        debugPrint(#function)
-        // canvasObservation.proxy = PKCanvasProxy(canvasView)
+        onSelectionChange(canvas.selection)
     }
 }
 
