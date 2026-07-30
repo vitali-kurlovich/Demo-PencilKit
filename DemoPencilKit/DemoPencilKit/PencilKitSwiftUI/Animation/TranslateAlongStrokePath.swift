@@ -63,13 +63,6 @@ extension TranslateAlongStrokePath {
 
             withAnimation(.easeInOut(duration: 1)) {
                 phase = 1
-
-            } completion: {
-                // stroke = nil
-//                if let lastStroke = stroke {
-//                    stroke = nil
-//                    drawing.strokes.append(lastStroke)
-//                }
             }
         }
         .overlay {
