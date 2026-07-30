@@ -1,7 +1,4 @@
 //
-//  DemoPencilKitApp.swift
-//  DemoPencilKit
-//
 //  Created by Kurlovich Vitali on 7/26/26.
 //
 
@@ -11,7 +8,7 @@ import SwiftUI
 struct DemoPencilKitApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            MainView()
         }
     }
 }
