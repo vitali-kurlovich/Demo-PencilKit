@@ -172,17 +172,14 @@ extension _PKCanvas: UIViewRepresentable {
             canvas.drawing = drawing
         }
 
-        if canvas.selection != selection {
-            canvas.selection = selection
-        }
-
         invalidateToolPicker(canvas, context: context)
 
-        debugPrint(#function)
+        debugPrint(#function, selection)
     }
 
     func makeCoordinator() -> PKCanvasCoordinator {
-        PKCanvasCoordinator($drawing, selection: $selection,
+        PKCanvasCoordinator($drawing,
+                            selection: $selection,
                             onDrawEvent: onDrawEvent,
                             onDrawingChange: onDrawingChange,
                             onSelectionChange: onSelectionChange)
@@ -272,12 +269,7 @@ private final class PKCanvasCoordinator: NSObject, PKCanvasViewDelegate {
     }
 
     func canvasViewSelectionDidChange(_ canvas: PKCanvasView) {
-        debugPrint(#function)
-
-        if selection.wrappedValue != canvas.selection {
-            selection.wrappedValue = canvas.selection
-        }
-
+        debugPrint(#function, canvas.selection)
         onSelectionChange(canvas.selection)
     }
 }
