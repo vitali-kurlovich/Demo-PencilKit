@@ -3,6 +3,7 @@
 //
 
 import PencilKit
+import PhotosUI
 import SwiftUI
 
 @Observable
@@ -23,6 +24,9 @@ final class SketchEditorModel {
     var name: String = "New Sketch"
 
     var presentInspector: Bool = false
+    var selectedPhoto: PhotosPickerItem?
+
+    var backgroundImage: Image?
 }
 
 extension SketchEditorModel {
@@ -40,18 +44,38 @@ struct SketchEditorScreen: View {
     private var model = SketchEditorModel()
 
     var body: some View {
-        NavigationStack {
-            PKCanvas($model.drawing, selection: $model.selection)
-                .toolPicker(displayMode: .visible)
-                .sketchEditorToolbar($model)
+        PKCanvas($model.drawing, selection: $model.selection)
+            .toolPicker(displayMode: .visible)
+            .sketchEditorToolbar($model)
+            .background {
+                if let image = model.backgroundImage {
+                    image
+                }
+            }
 
-        }.inspector(isPresented: $model.presentInspector) {
-            PKDrawingInspector(
-                drawing: $model.drawing,
-                selection: $model.selection,
-            )
-        }.navigationTitle($model.name)
+            .inspector(isPresented: $model.presentInspector) {
+                PKDrawingInspector(
+                    drawing: $model.drawing,
+                    selection: $model.selection,
+                )
+
+            }.navigationTitle($model.name)
             .navigationBarTitleDisplayMode(.inline)
+            .task(id: model.selectedPhoto) {
+                guard let selectedPhoto = model.selectedPhoto else {
+                    return
+                }
+
+                if selectedPhoto.supportedContentTypes
+                    .contains(where: { $0.conforms(to: .image)
+                    })
+                {
+                    debugPrint("Load image")
+
+                    model.backgroundImage = try? await selectedPhoto
+                        .loadTransferable(type: Image.self)
+                }
+            }
     }
 }
 
@@ -68,6 +92,13 @@ struct SketchEditorToolbar: ViewModifier {
             }
 
             ToolbarItemGroup(placement: .primaryAction) {
+                PhotosPicker(
+                    selection: $model.selectedPhoto,
+                    //  matching: .all(of: [.images, .screenshots]),
+                ) {
+                    Image(systemName: "photo")
+                }
+
                 Toggle(isOn: $model.presentInspector) {
                     Label("Inspect", systemImage: "sidebar.trailing")
                 }
