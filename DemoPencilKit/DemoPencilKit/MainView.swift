@@ -5,8 +5,11 @@
 import SwiftUI
 
 struct MainView: View {
+    @State
+    var model: SketchEditorModel = .init()
+
     var body: some View {
-        SketchEditorScreen()
+        SketchEditorScreen($model)
     }
 }
 
