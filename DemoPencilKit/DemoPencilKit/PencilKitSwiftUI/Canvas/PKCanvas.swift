@@ -5,6 +5,11 @@
 import PencilKit
 import SwiftUI
 
+enum ToolUsing {
+    case begin(tool: any PKTool)
+    case end(tool: any PKTool)
+}
+
 struct PKCanvas: View {
     @Binding
     private var drawing: PKDrawing
@@ -15,6 +20,7 @@ struct PKCanvas: View {
     private let onDrawEvent: (PKDrawEvent) -> Void
     private let onDrawingChange: (PKDrawing) -> Void
     private let onSelectionChange: (Set<UUID>) -> Void
+    private let onToolUsing: (ToolUsing) -> Void
 
     @State
     private var defaultSelection: Set<UUID> = []
@@ -42,6 +48,7 @@ struct PKCanvas: View {
             onDrawEvent: { _ in },
             onDrawingChange: { _ in },
             onSelectionChange: { _ in },
+            onToolUsing: { _ in },
         )
     }
 
@@ -49,13 +56,15 @@ struct PKCanvas: View {
                  selection: Binding<Set<UUID>>,
                  onDrawEvent: @escaping (PKDrawEvent) -> Void,
                  onDrawingChange: @escaping (PKDrawing) -> Void,
-                 onSelectionChange: @escaping (Set<UUID>) -> Void)
+                 onSelectionChange: @escaping (Set<UUID>) -> Void,
+                 onToolUsing: @escaping (ToolUsing) -> Void)
     {
         _drawing = drawing
         _selection = selection
         self.onDrawEvent = onDrawEvent
         self.onDrawingChange = onDrawingChange
         self.onSelectionChange = onSelectionChange
+        self.onToolUsing = onToolUsing
     }
 
     var body: some View {
@@ -65,6 +74,7 @@ struct PKCanvas: View {
             onDrawEvent: onDrawEvent,
             onDrawingChange: onDrawingChange,
             onSelectionChange: onSelectionChange,
+            onToolUsing: onToolUsing,
         )
     }
 }
@@ -77,6 +87,7 @@ extension PKCanvas {
             onDrawEvent: onDrawEvent,
             onDrawingChange: onDrawingChange,
             onSelectionChange: onSelectionChange,
+            onToolUsing: onToolUsing,
         )
     }
 
@@ -87,6 +98,7 @@ extension PKCanvas {
             onDrawEvent: onDrawEvent,
             onDrawingChange: onDrawingChange,
             onSelectionChange: onSelectionChange,
+            onToolUsing: onToolUsing,
         )
     }
 
@@ -97,6 +109,18 @@ extension PKCanvas {
             onDrawEvent: onDrawEvent,
             onDrawingChange: onDrawingChange,
             onSelectionChange: onSelectionChange,
+            onToolUsing: onToolUsing,
+        )
+    }
+
+    func onTool(using onToolUsing: @escaping (ToolUsing) -> Void) -> Self {
+        PKCanvas(
+            drawing: _drawing,
+            selection: _selection,
+            onDrawEvent: onDrawEvent,
+            onDrawingChange: onDrawingChange,
+            onSelectionChange: onSelectionChange,
+            onToolUsing: onToolUsing,
         )
     }
 }
@@ -114,31 +138,21 @@ private struct _PKCanvas {
     private let onDrawEvent: (PKDrawEvent) -> Void
     private let onDrawingChange: (PKDrawing) -> Void
     private let onSelectionChange: (Set<UUID>) -> Void
-
-    init(
-        _ drawing: Binding<PKDrawing>,
-        selection: Binding<Set<UUID>>,
-    ) {
-        self.init(
-            drawing: drawing,
-            selection: selection,
-            onDrawEvent: { _ in },
-            onDrawingChange: { _ in },
-            onSelectionChange: { _ in },
-        )
-    }
+    private let onToolUsing: (ToolUsing) -> Void
 
     init(drawing: Binding<PKDrawing>,
          selection: Binding<Set<UUID>>,
          onDrawEvent: @escaping (PKDrawEvent) -> Void,
          onDrawingChange: @escaping (PKDrawing) -> Void,
-         onSelectionChange: @escaping (Set<UUID>) -> Void)
+         onSelectionChange: @escaping (Set<UUID>) -> Void,
+         onToolUsing: @escaping (ToolUsing) -> Void)
     {
         _drawing = drawing
         _selection = selection
         self.onDrawEvent = onDrawEvent
         self.onDrawingChange = onDrawingChange
         self.onSelectionChange = onSelectionChange
+        self.onToolUsing = onToolUsing
     }
 }
 
@@ -182,7 +196,8 @@ extension _PKCanvas: UIViewRepresentable {
                             selection: $selection,
                             onDrawEvent: onDrawEvent,
                             onDrawingChange: onDrawingChange,
-                            onSelectionChange: onSelectionChange)
+                            onSelectionChange: onSelectionChange,
+                            onToolUsing: onToolUsing)
     }
 
     static func dismantleUIView(_ canvas: PKCanvasView, coordinator: PKCanvasCoordinator) {
@@ -230,6 +245,7 @@ private final class PKCanvasCoordinator: NSObject, PKCanvasViewDelegate {
     let onDrawingChange: (PKDrawing) -> Void
 
     let onSelectionChange: (Set<UUID>) -> Void
+    let onToolUsing: (ToolUsing) -> Void
 
     private let drawing: Binding<PKDrawing>
     private let selection: Binding<Set<UUID>>
@@ -248,29 +264,36 @@ private final class PKCanvasCoordinator: NSObject, PKCanvasViewDelegate {
          selection: Binding<Set<UUID>>,
          onDrawEvent: @escaping (PKDrawEvent) -> Void,
          onDrawingChange: @escaping (PKDrawing) -> Void,
-         onSelectionChange: @escaping (Set<UUID>) -> Void)
+         onSelectionChange: @escaping (Set<UUID>) -> Void,
+         onToolUsing: @escaping (ToolUsing) -> Void)
     {
         self.onDrawEvent = onDrawEvent
         self.onDrawingChange = onDrawingChange
         self.onSelectionChange = onSelectionChange
+        self.onToolUsing = onToolUsing
 
         self.drawing = drawing
         self.selection = selection
     }
 
-    func canvasViewDrawingDidChange(_ canvas: PKCanvasView) {
-        debugPrint("\(#function) drawing:\(canvas.drawing.strokes)")
-
-        if drawing.wrappedValue != canvas.drawing {
-            drawing.wrappedValue = canvas.drawing
+    func canvasViewDrawingDidChange(_ canvasView: PKCanvasView) {
+        if drawing.wrappedValue != canvasView.drawing {
+            drawing.wrappedValue = canvasView.drawing
         }
 
-        onDrawingChange(canvas.drawing)
+        onDrawingChange(canvasView.drawing)
     }
 
-    func canvasViewSelectionDidChange(_ canvas: PKCanvasView) {
-        debugPrint(#function, canvas.selection)
-        onSelectionChange(canvas.selection)
+    func canvasViewSelectionDidChange(_ canvasView: PKCanvasView) {
+        onSelectionChange(canvasView.selection)
+    }
+
+    func canvasViewDidBeginUsingTool(_ canvasView: PKCanvasView) {
+        onToolUsing(.begin(tool: canvasView.tool))
+    }
+
+    func canvasViewDidEndUsingTool(_ canvasView: PKCanvasView) {
+        onToolUsing(.end(tool: canvasView.tool))
     }
 }
 
