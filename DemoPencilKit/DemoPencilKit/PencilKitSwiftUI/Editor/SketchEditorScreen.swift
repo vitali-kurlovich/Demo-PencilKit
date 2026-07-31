@@ -2,6 +2,7 @@
 //  Created by Kurlovich Vitali on 7/29/26.
 //
 
+import Foundation
 import PencilKit
 import PhotosUI
 import SwiftUI
@@ -27,6 +28,14 @@ final class SketchEditorModel {
     var selectedPhoto: PhotosPickerItem?
 
     var backgroundImage: Image?
+    var backgroundScaleFactor: Float = 1.0
+}
+
+extension SketchEditorModel {
+    var scaleEffectSize: CGSize {
+        let scale = CGFloat(backgroundScaleFactor)
+        return .init(width: scale, height: scale)
+    }
 }
 
 extension SketchEditorModel {
@@ -40,8 +49,12 @@ extension SketchEditorModel {
 }
 
 struct SketchEditorScreen: View {
-    @State
-    private var model = SketchEditorModel()
+    @Binding
+    private var model: SketchEditorModel
+
+    init(_ model: Binding<SketchEditorModel>) {
+        _model = model
+    }
 
     var body: some View {
         PKCanvas($model.drawing, selection: $model.selection)
@@ -49,7 +62,7 @@ struct SketchEditorScreen: View {
             .sketchEditorToolbar($model)
             .background {
                 if let image = model.backgroundImage {
-                    image
+                    image.scaleEffect(model.scaleEffectSize)
                 }
             }
 
@@ -61,6 +74,10 @@ struct SketchEditorScreen: View {
 
             }.navigationTitle($model.name)
             .navigationBarTitleDisplayMode(.inline)
+            .navigationSubtitle(
+                model.backgroundScaleFactor
+                    .formatted(.percent.precision(.fractionLength(0))),
+            )
             .task(id: model.selectedPhoto) {
                 guard let selectedPhoto = model.selectedPhoto else {
                     return
@@ -92,6 +109,13 @@ struct SketchEditorToolbar: ViewModifier {
             }
 
             ToolbarItemGroup(placement: .primaryAction) {
+                Spacer()
+                Slider(value: $model.backgroundScaleFactor,
+                       in: 0.2 ... 2.0, step: 0.1).frame(width: 330)
+                    .disabled(
+                        model.backgroundImage == nil,
+                    )
+
                 PhotosPicker(
                     selection: $model.selectedPhoto,
                     //  matching: .all(of: [.images, .screenshots]),
@@ -116,7 +140,12 @@ extension View {
 }
 
 #Preview {
+    @Previewable @State
+    var model = SketchEditorModel()
+
     NavigationStack {
-        SketchEditorScreen()
+        SketchEditorScreen($model)
+    }.onAppear {
+        model.backgroundImage = Image("Rabbit")
     }
 }
