@@ -61,8 +61,11 @@
         </g>
     </g>
     <g id="Details">
-        <g transform="matrix(-0.40833,-0.912834,0.912834,-0.40833,447.02,458.1)">
-            <g id="Eye">
+        <g id="Eye">
+            <g transform="matrix(-0.336766,-0.663127,0.657377,-0.333845,618.573884,452.83171)">
+                <ellipse cx="0" cy="0" rx="13.89" ry="11.15" style="fill:white;"/>
+            </g>
+            <g transform="matrix(-0.40833,-0.912834,0.912834,-0.40833,447.02,458.1)">
                 <ellipse cx="0" cy="0" rx="13.89" ry="11.15" style="fill:white;"/>
             </g>
         </g>
