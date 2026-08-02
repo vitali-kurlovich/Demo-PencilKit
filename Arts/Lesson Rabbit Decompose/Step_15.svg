@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="100%" height="100%" viewBox="0 0 728 1200" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+    <g id="Head">
+        <g id="Eyes">
+            <g id="Left-eye" serif:id="Left eye">
+                <g transform="matrix(1.178753,-0.056806,0.052019,1.079435,-111.39598,-12.746621)">
+                    <path d="M439.245,436.454C454.698,436.454 470.543,455.253 470.543,475.74C470.543,496.227 453.607,516.195 438.154,516.195C422.7,516.195 408.538,497.721 408.538,477.234C408.538,456.747 423.791,436.454 439.245,436.454Z"/>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>
