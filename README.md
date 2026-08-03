@@ -7,12 +7,6 @@
 ## Введение
 
 
-https://github.com/user-attachments/assets/d40e7dec-cfb0-4885-9239-db658719991a
-
-
-
-
-
 ## Функциональные требования
 
  - Пошаговое прохождение 
@@ -33,3 +27,24 @@ https://github.com/user-attachments/assets/d40e7dec-cfb0-4885-9239-db658719991a
   Для уменьшения занимаемого места на SSD можно слелать:
    - Оптимизировать по размеру файлы уроков
    - Загружать уроки динамически, по ходу использования программы и удаление рание пройденых, можно использовать [Background Assets](https://developer.apple.com/documentation/backgroundassets)
+
+
+
+
+ ## Рисование линий
+
+На этапе урока, где требуется отрабатывать рисование линий, пользователю следует обозначить путь по которому должен пройти наконечник пера. Для привлечения внимания можно задействовать анимацию, как в примерах ниже
+
+Для того, что-бы определить насколько точно пользователь нарисовал линию можно использовать [Расстояние Фреше](https://en.wikipedia.org/wiki/Fr%C3%A9chet_distance), данная метрика позволяет выяснить мерау сходства кривых. Для каждого шага урока можно выставить пороговое значение данной метрики, что-бы выяснить нужно ли повторить ещё раз данный шаг урока.
+
+Релизацию вычисления можно посмотреть тут: [FrechetDistance.swift](https://github.com/vitali-kurlovich/swift-mathkit/blob/main/Sources/MathKit/Measurment/FrechetDistance/FrechetDistance.swift)
+
+
+### Варианты анимации 
+https://github.com/user-attachments/assets/bfaa0963-10ae-46d2-a134-4bf3da7e3c64
+
+
+https://github.com/user-attachments/assets/7422764f-0fb9-462e-bd21-7baa98793fb5
+
+
+
