@@ -7,6 +7,9 @@
 ## Введение
 
 
+
+
+
 ## Функциональные требования
 
  - Галерея уроков
@@ -37,7 +40,8 @@
 
 ## Рисование закраски
 
-На 
+<img width="600" height="467.5" alt="Image_Fill_lesson" src="https://github.com/user-attachments/assets/6a78cd4b-363b-45b3-8c76-51dc17e17507" />
+
 
 
  ## Рисование линий
