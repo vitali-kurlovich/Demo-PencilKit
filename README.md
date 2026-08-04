@@ -38,8 +38,11 @@
  - Нарисованное пользователем изображение
  - Эталонное изображение (рис. 4)
  - Изображение области закраски на данном шаге (рис. 5)
+   
+<img width="1083" height="620" alt="Fill_Mesurment" src="https://github.com/user-attachments/assets/91ee3316-7035-4ff2-8610-c3049eee5771" />
 
-<img width="700" height="600" alt="Fill_Less" src="https://github.com/user-attachments/assets/dc44fb4c-25a2-4489-bdb2-e8c808611b2b" />
+При оценке следует учитывать площадь попадающую в область закраски (обозначена зелёным ), выходящую за область закраски (обозначена красным), и недозакрашеную область (обозначена жёлтым). 
+
 
 Для реализации алгоритма оценки разумно использовать GPU через [CoreImage](https://developer.apple.com/documentation/coreimage) и реализацию [Custom Kernel](https://developer.apple.com/documentation/coreimage/writing-custom-kernels) на [Metal Shading Language](https://developer.apple.com/metal/Metal-Shading-Language-Specification.pdf)
 
