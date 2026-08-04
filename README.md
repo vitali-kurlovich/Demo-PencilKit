@@ -41,10 +41,10 @@
 
 <img width="700" height="600" alt="Fill_Less" src="https://github.com/user-attachments/assets/dc44fb4c-25a2-4489-bdb2-e8c808611b2b" />
 
+Для реализации алгоритма оценки разумно использовать GPU через [CoreImage](https://developer.apple.com/documentation/coreimage) и реализацию [Custom Kernel](https://developer.apple.com/documentation/coreimage/writing-custom-kernels) на [Metal Shading Language](https://developer.apple.com/metal/Metal-Shading-Language-Specification.pdf)
 
 
-
- ## Рисование линий
+ #### Рисование линий
 
 На этапе урока, где требуется отрабатывать рисование линий, пользователю следует обозначить путь по которому должен пройти наконечник пера. Для привлечения внимания можно задействовать анимацию, как в примерах ниже
 
