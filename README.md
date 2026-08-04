@@ -39,12 +39,16 @@
  - Эталонное изображение (рис. 4)
  - Изображение области закраски на данном шаге (рис. 5)
    
-<img width="1083" height="620" alt="Fill_Mesurment" src="https://github.com/user-attachments/assets/91ee3316-7035-4ff2-8610-c3049eee5771" />
+<img width="1083" height="620" alt="Fill_Mesurment" src="https://github.com/user-attachments/assets/21c9da72-2ac1-4f11-93aa-c832ea93e86a" />
 
-При оценке следует учитывать площадь попадающую в область закраски (обозначена зелёным ), выходящую за область закраски (обозначена красным), и недозакрашеную область (обозначена жёлтым). 
+При оценке следует учитывать площадь попадающую в область закраски (обозначена синим ), выходящую за область закраски (обозначена красным), и недозакрашеную область (обозначена синим). 
 
 
 Для реализации алгоритма оценки разумно использовать GPU через [CoreImage](https://developer.apple.com/documentation/coreimage) и реализацию [Custom Kernel](https://developer.apple.com/documentation/coreimage/writing-custom-kernels) на [Metal Shading Language](https://developer.apple.com/metal/Metal-Shading-Language-Specification.pdf)
+Шейдер будет писать в разные цветовые каналы соответствующие значения
+
+<img width="337.5" height="600" alt="Shader" src="https://github.com/user-attachments/assets/13d5d31e-38a5-4d73-b78b-fba7b32c8cbd" />
+
 
 
  #### Рисование линий
