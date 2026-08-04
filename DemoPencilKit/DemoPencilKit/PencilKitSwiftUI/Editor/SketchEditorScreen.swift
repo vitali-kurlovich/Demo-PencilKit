@@ -5,52 +5,12 @@
 import Foundation
 import PencilKit
 import PhotosUI
+import SwiftData
 import SwiftUI
 
-@Observable
-final class SketchEditorModel {
-    var drawing: PKDrawing = .init()
-
-    var selection: Set<UUID> = []
-
-    var strokes: [PKStroke] {
-        get {
-            drawing.strokes
-        }
-        set {
-            drawing.strokes = newValue
-        }
-    }
-
-    var name: String = "New Sketch"
-
-    var presentInspector: Bool = false
-    var selectedPhoto: PhotosPickerItem?
-
-    var backgroundImage: Image?
-    var backgroundScaleFactor: Float = 1.0
-
-    var isDrawing: Bool = false
-}
-
-extension SketchEditorModel {
-    var scaleEffectSize: CGSize {
-        let scale = CGFloat(backgroundScaleFactor)
-        return .init(width: scale, height: scale)
-    }
-}
-
-extension SketchEditorModel {
-    func save() {
-        let data = drawing.dataRepresentation()
-
-        debugPrint("Data \(data.count)")
-    }
-
-    func rename() {}
-}
-
 struct SketchEditorScreen: View {
+    @Environment(\.modelContext) private var modelContext
+
     @Binding
     private var model: SketchEditorModel
 
@@ -114,7 +74,7 @@ struct SketchEditorScreen: View {
 
 #Preview {
     @Previewable @State
-    var model = SketchEditorModel()
+    var model = SketchEditorModel(lesson: LessonItem())
 
     NavigationStack {
         SketchEditorScreen($model)
