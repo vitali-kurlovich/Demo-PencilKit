@@ -66,7 +66,7 @@ struct SmoothQuadraticRelativeCommand: Sendable, Hashable {
     let offsets: [Vector]
 }
 
-enum PathCommand {
+enum SVGPathCommand {
     case move(MoveCommand)
     case moveRelative(MoveRelativeCommand)
 
@@ -94,4 +94,19 @@ enum PathCommand {
     // case arc()
 
     case closePath
+}
+
+struct SVGPathCommands<S: StringProtocol>: Sequence {
+    typealias Element = SVGPathCommand
+    typealias Iterator = SVGPathCommandIterator<S>
+
+    let d: S
+
+    init(_ string: S) {
+        d = string
+    }
+
+    func makeIterator() -> SVGPathCommandIterator<S> {
+        SVGPathCommandIterator<S>(d)
+    }
 }

@@ -4,14 +4,16 @@
 
 import struct Foundation.CharacterSet
 
-struct PathCommandIterator<S: StringProtocol>: IteratorProtocol {
+struct SVGPathCommandIterator<S: StringProtocol>: IteratorProtocol {
+    typealias Element = SVGPathCommand
+
     private var iterator: CommandIterator<S>
 
     init(_ string: S) {
         iterator = CommandIterator(string)
     }
 
-    mutating func next() -> PathCommand? {
+    mutating func next() -> SVGPathCommand? {
         guard let next = iterator.next() else {
             return nil
         }
@@ -270,31 +272,38 @@ private struct CommandIterator<S: StringProtocol>: IteratorProtocol {
 
     var startIndex: S.Index
 
+    var isFinish = false
+
     init(_ string: S) {
         self.string = string
         startIndex = string.startIndex
     }
 
+    var isEnd: Bool {
+        startIndex == string.endIndex
+    }
+
     mutating func next() -> PathElement? {
-        if startIndex == string.endIndex {
+        if isFinish {
             return nil
         }
 
         let char = string[startIndex]
-        startIndex = string.index(after: startIndex)
 
         guard let command = Command(rawValue: char) else {
             return nil
+        }
+
+        if isEnd == false {
+            startIndex = string.index(after: startIndex)
+        } else {
+            isFinish = true
         }
 
         return PathElement(
             command: command,
             arguments: argsuments(for: command),
         )
-    }
-
-    var isEnd: Bool {
-        startIndex == string.endIndex
     }
 
     mutating func argsuments(for command: Command) -> [Double] {
@@ -307,6 +316,8 @@ private struct CommandIterator<S: StringProtocol>: IteratorProtocol {
         let count = command.argsCount
 
         while true {
+            skipWhitespacesAndNewlines()
+
             argsuments.reserveCapacity(count)
 
             for _ in 0 ..< count {
@@ -333,6 +344,7 @@ private struct CommandIterator<S: StringProtocol>: IteratorProtocol {
 
         while CharacterSet.decimalDigitsAndFractionSeparator.contains(string[startIndex].unicodeScalars.first!) {
             if isEnd {
+                isFinish = true
                 break
             }
             startIndex = string.index(after: startIndex)
@@ -340,12 +352,15 @@ private struct CommandIterator<S: StringProtocol>: IteratorProtocol {
 
         let end = startIndex
 
+        debugPrint(string[begin ..< end])
+
         return Double(string[begin ..< end])!
     }
 
     mutating func skipWhitespacesAndNewlines() {
         while CharacterSet.decimalDigitsAndFractionSeparator.contains(string[startIndex].unicodeScalars.first!) {
             if isEnd {
+                isFinish = true
                 break
             }
             startIndex = string.index(after: startIndex)
