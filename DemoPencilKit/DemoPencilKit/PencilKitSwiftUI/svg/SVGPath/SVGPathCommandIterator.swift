@@ -4,8 +4,8 @@
 
 import struct Foundation.CharacterSet
 
-struct SVGPathCommandIterator<S: StringProtocol>: IteratorProtocol {
-    typealias Element = SVGPathCommand
+public struct SVGPathCommandIterator<S: StringProtocol>: IteratorProtocol {
+    public typealias Element = SVGPathCommand
 
     private var iterator: CommandIterator<S>
 
@@ -13,12 +13,13 @@ struct SVGPathCommandIterator<S: StringProtocol>: IteratorProtocol {
         iterator = CommandIterator(string)
     }
 
-    mutating func next() -> SVGPathCommand? {
+    public mutating func next() -> SVGPathCommand? {
         guard let next = iterator.next() else {
             return nil
         }
 
-        let count = next.arguments.count / next.command.argsCount
+        let argsCount = next.command.argsCount
+        let count = argsCount > 0 ? next.arguments.count / argsCount : 0
 
         switch next.command {
         case .M:
@@ -79,17 +80,17 @@ struct SVGPathCommandIterator<S: StringProtocol>: IteratorProtocol {
             return .horizontal(HorizontalLineCommand(points: points))
 
         case .h:
-            var offset: [HorizontalVector] = []
+            var offsets: [HorizontalVector] = []
 
-            offset.reserveCapacity(count)
+            offsets.reserveCapacity(count)
             var iterator = next.arguments.makeIterator()
 
             while let dx = iterator.next() {
-                offset.append(HorizontalVector(dx: dx))
+                offsets.append(HorizontalVector(dx: dx))
             }
 
             return .horizontalRelative(
-                HorizontalRelativeLineCommand(offset: offset),
+                HorizontalRelativeLineCommand(offsets: offsets),
             )
 
         case .V:
@@ -105,16 +106,16 @@ struct SVGPathCommandIterator<S: StringProtocol>: IteratorProtocol {
             return .vertical(VerticalLineCommand(points: points))
 
         case .v:
-            var offset: [VerticalVector] = []
+            var offsets: [VerticalVector] = []
 
-            offset.reserveCapacity(count)
+            offsets.reserveCapacity(count)
             var iterator = next.arguments.makeIterator()
 
             while let dy = iterator.next() {
-                offset.append(VerticalVector(dy: dy))
+                offsets.append(VerticalVector(dy: dy))
             }
 
-            return .verticalRelative(VerticalRelativeLineCommand(offset: offset))
+            return .verticalRelative(VerticalRelativeLineCommand(offsets: offsets))
 
         case .C:
             var points: [CubicPoint] = []
@@ -253,173 +254,6 @@ struct SVGPathCommandIterator<S: StringProtocol>: IteratorProtocol {
 
         case .Z, .z:
             return .closePath
-        }
-    }
-}
-
-private extension CharacterSet {
-    static let decimalDigitsAndFractionSeparator = CharacterSet.decimalDigits.union(
-        CharacterSet(charactersIn: "."),
-    )
-
-    static let whitespacesNewlinesAndCommma = CharacterSet.whitespacesAndNewlines.union(
-        CharacterSet(charactersIn: ","),
-    )
-}
-
-private struct CommandIterator<S: StringProtocol>: IteratorProtocol {
-    let string: S
-
-    var startIndex: S.Index
-
-    var isFinish = false
-
-    init(_ string: S) {
-        self.string = string
-        startIndex = string.startIndex
-    }
-
-    var isEnd: Bool {
-        startIndex == string.endIndex
-    }
-
-    mutating func next() -> PathElement? {
-        if isFinish {
-            return nil
-        }
-
-        let char = string[startIndex]
-
-        guard let command = Command(rawValue: char) else {
-            return nil
-        }
-
-        if isEnd == false {
-            startIndex = string.index(after: startIndex)
-        } else {
-            isFinish = true
-        }
-
-        return PathElement(
-            command: command,
-            arguments: argsuments(for: command),
-        )
-    }
-
-    mutating func argsuments(for command: Command) -> [Double] {
-        if command == .z || command == .Z {
-            return []
-        }
-
-        var argsuments: [Double] = []
-
-        let count = command.argsCount
-
-        while true {
-            skipWhitespacesAndNewlines()
-
-            argsuments.reserveCapacity(count)
-
-            for _ in 0 ..< count {
-                argsuments.append(nextNumber())
-            }
-
-            skipWhitespacesAndNewlines()
-
-            let char = string[startIndex]
-            let command = Command(rawValue: char)
-
-            if command != nil || isEnd {
-                break
-            }
-        }
-
-        return argsuments
-    }
-
-    mutating func nextNumber() -> Double {
-        skipWhitespacesAndNewlines()
-
-        var begin = startIndex
-
-        while CharacterSet.decimalDigitsAndFractionSeparator.contains(string[startIndex].unicodeScalars.first!) {
-            if isEnd {
-                isFinish = true
-                break
-            }
-            startIndex = string.index(after: startIndex)
-        }
-
-        let end = startIndex
-
-        debugPrint(string[begin ..< end])
-
-        return Double(string[begin ..< end])!
-    }
-
-    mutating func skipWhitespacesAndNewlines() {
-        while CharacterSet.decimalDigitsAndFractionSeparator.contains(string[startIndex].unicodeScalars.first!) {
-            if isEnd {
-                isFinish = true
-                break
-            }
-            startIndex = string.index(after: startIndex)
-        }
-    }
-}
-
-extension CommandIterator {
-    struct PathElement {
-        let command: Command
-        let arguments: [Double]
-    }
-
-    enum Command: Character {
-        case M = "M"
-        case m = "m"
-
-        case L = "L"
-        case l = "l"
-
-        case H = "H"
-        case h = "h"
-
-        case v = "v"
-        case V = "V"
-
-        case C = "C"
-        case c = "c"
-
-        case S = "S"
-        case s = "s"
-
-        case Q = "Q"
-        case q = "q"
-
-        case T = "T"
-        case t = "t"
-
-        case A = "A"
-        case a = "a"
-
-        case Z = "Z"
-        case z = "z"
-
-        var argsCount: Int {
-            switch self {
-            case .Z, .z:
-                0
-            case .H, .h, .V, .v:
-                1
-            case .M, .m, .L, .l, .T, .t:
-                2
-            case .S, .s, .Q, .q:
-                4
-            case .C, .c:
-                6
-            case .A, .a:
-                7
-            }
         }
     }
 }

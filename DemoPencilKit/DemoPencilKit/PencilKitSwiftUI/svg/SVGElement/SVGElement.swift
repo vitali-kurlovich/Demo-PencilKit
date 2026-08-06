@@ -2,22 +2,20 @@
 //  Created by Kurlovich Vitali on 8/3/26.
 //
 
-protocol SVGElement {
+public protocol SVGElement: Sendable {
     static var name: String { get }
 
     var attributes: [String: String] { get }
     var childs: [any SVGElement] { get }
 }
 
-extension SVGElement {
+public extension SVGElement {
     var name: String {
         Self.name
     }
 }
 
-protocol SVGMutableElement: SVGElement {
+public protocol SVGMutableElement: SVGElement {
     var attributes: [String: String] { get set }
     var childs: [any SVGElement] { get set }
 }
-
-// SVGElement+

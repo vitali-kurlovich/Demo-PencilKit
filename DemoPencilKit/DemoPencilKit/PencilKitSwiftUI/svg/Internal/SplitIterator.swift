@@ -7,9 +7,10 @@ struct SplitIterator<S: StringProtocol>: IteratorProtocol {
 
     let string: S
 
-    let separator: Character
-    var startIndex: S.Index
+    private let separator: Character
+    private var startIndex: S.Index
 
+    @inlinable
     init(
         string: S,
         separator: Character,
@@ -19,6 +20,7 @@ struct SplitIterator<S: StringProtocol>: IteratorProtocol {
         startIndex = string.startIndex
     }
 
+    @inlinable
     mutating func next() -> S.SubSequence? {
         guard startIndex != string.endIndex else {
             return nil

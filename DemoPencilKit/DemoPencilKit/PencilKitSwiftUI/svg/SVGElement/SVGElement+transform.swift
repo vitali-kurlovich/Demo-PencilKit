@@ -6,9 +6,9 @@ import struct CoreGraphics.CGAffineTransform
 import struct Foundation.CGFloat
 
 extension SVGElement {
-    var transform: CGAffineTransform {
+    var transform: CGAffineTransform? {
         guard let transform = attributes["transform"] else {
-            return .identity
+            return nil
         }
 
         if transform.hasPrefix("matrix(") {
@@ -16,7 +16,7 @@ extension SVGElement {
             return parseMatrix(from: mt)
         }
 
-        return .identity
+        return nil
     }
 }
 

@@ -5,7 +5,7 @@
 import struct CoreGraphics.CGFloat
 import struct CoreGraphics.CGRect
 
-extension SvgTag {
+public extension SvgTag {
     var viewBox: CGRect {
         guard let viewBox = attributes["viewBox"] else {
             return CGRect(x: 0, y: 0, width: 1, height: 1)
