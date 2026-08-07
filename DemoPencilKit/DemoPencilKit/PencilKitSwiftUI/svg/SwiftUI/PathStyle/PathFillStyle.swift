@@ -9,6 +9,11 @@ import struct SwiftUI.Gradient
 struct PathFillStyle: Sendable, Equatable {
     var color: Color
     var style: FillStyle
+
+    init(color: Color, style: FillStyle = FillStyle()) {
+        self.color = color
+        self.style = style
+    }
 }
 
 extension PathFillStyle {

@@ -2,6 +2,7 @@
 //  Created by Kurlovich Vitali on 8/7/26.
 //
 
+import struct CoreGraphics.CGAffineTransform
 import struct SwiftUI.Gradient
 
 struct PathStyle: Sendable, Equatable {
@@ -15,6 +16,13 @@ extension PathStyle {
         let stroke = stroke.mix(with: other.stroke, by: fraction, in: colorSpace)
 
         return Self(fill: fill, stroke: stroke)
+    }
+}
+
+extension PathStyle {
+    func unscaleIfNeeds(_ tr: CGAffineTransform) -> PathStyle {
+        let stroke = stroke.unscaleIfNeeds(tr)
+        return PathStyle(fill: fill, stroke: stroke)
     }
 }
 
