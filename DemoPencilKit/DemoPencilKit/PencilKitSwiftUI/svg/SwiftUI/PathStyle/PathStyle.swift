@@ -17,3 +17,33 @@ extension PathStyle {
         return Self(fill: fill, stroke: stroke)
     }
 }
+
+extension FillShading {
+    init(_ style: PathFillStyle) {
+        self.init(color: style.color, style: style.style)
+    }
+}
+
+extension StrokeShading {
+    init(_ style: PathStrokeStyle) {
+        self.init(color: style.color, style: style.style)
+    }
+}
+
+extension ShadingStyle {
+    init(_ style: PathStyle) {
+        let fill: FillShading? = if style.fill.color == .clear {
+            nil
+        } else {
+            FillShading(style.fill)
+        }
+
+        let stroke: StrokeShading? = if style.stroke.color == .clear || style.stroke.style.lineWidth == 0 {
+            nil
+        } else {
+            StrokeShading(style.stroke)
+        }
+
+        self.init(fill: fill, stroke: stroke)
+    }
+}
