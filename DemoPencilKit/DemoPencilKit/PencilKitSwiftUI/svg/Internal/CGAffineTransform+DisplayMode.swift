@@ -7,6 +7,15 @@ import struct CoreGraphics.CGFloat
 import struct CoreGraphics.CGRect
 
 extension CGAffineTransform {
+    static func center(from src: CGRect, to dst: CGRect) -> CGAffineTransform {
+        let tx = dst.midX - src.midX
+        let ty = dst.midY - src.midY
+
+        return CGAffineTransform(translationX: tx, y: ty)
+    }
+}
+
+extension CGAffineTransform {
     static func fit(from src: CGRect, to dst: CGRect) -> CGAffineTransform {
         assert(src.width != 0)
         assert(src.height != 0)
