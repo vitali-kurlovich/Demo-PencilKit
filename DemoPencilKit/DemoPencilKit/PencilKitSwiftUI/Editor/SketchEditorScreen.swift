@@ -14,6 +14,9 @@ struct SketchEditorScreen: View {
     @Binding
     private var model: SketchEditorModel
 
+    @State
+    var stepPhase: StepPhase = .initial
+
     init(_ model: Binding<SketchEditorModel>) {
         _model = model
     }
@@ -25,11 +28,13 @@ struct SketchEditorScreen: View {
                     switch event {
                     case .begin:
                         model.isDrawing = true
+
+                        stepPhase = .highlight
                     case .end:
                         model.isDrawing = false
+                        stepPhase = .started
                     }
                 }
-
             })
 
             .toolPicker(displayMode: .visible)
@@ -38,8 +43,12 @@ struct SketchEditorScreen: View {
                 if let image = model.backgroundImage {
                     image
                         .scaleEffect(model.scaleEffectSize)
-                        .opacity(model.isDrawing ? 0.33 : 1)
                 }
+            }
+            .overlay {
+                Step_O8View(state: $stepPhase)
+                    .scaleEffect(model.scaleEffectSize)
+                    .allowsHitTesting(false)
             }
 
             .inspector(isPresented: $model.presentInspector) {
@@ -79,6 +88,6 @@ struct SketchEditorScreen: View {
     NavigationStack {
         SketchEditorScreen($model)
     }.onAppear {
-        model.backgroundImage = Image("Rabbit")
+        model.backgroundImage = Image("Rabbit/Step_08")
     }
 }
