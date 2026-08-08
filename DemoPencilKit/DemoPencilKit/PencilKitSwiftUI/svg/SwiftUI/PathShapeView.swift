@@ -14,10 +14,10 @@ struct PathShapeView: View {
             context,
             size in
             let transform = CGAffineTransform
-                .fit(from: viewBox, to: CGRect(origin: .zero, size: size))
+                .center(from: viewBox, to: CGRect(origin: .zero, size: size))
 
             var ctx = context
-            ctx.transform = transform
+            ctx.transform = context.transform.concatenating(transform)
 
             let shading = ShadingStyle(style.unscaleIfNeeds(transform))
 
@@ -29,11 +29,13 @@ struct PathShapeView: View {
                 ctx.stroke(path, with: stroke.shading, style: stroke.style)
             }
 
-        }.frame(idealWidth: viewBox.width, idealHeight: viewBox.height)
+        }.frame(width: viewBox.width * 2, height: viewBox.height * 2)
     }
 }
 
 #Preview {
+    let viewBox = CGRect(x: 0, y: 0, width: 728, height: 1200) // .init(width: 250, height: 250)
+
     let roundedRect = CGRect(x: (250 - 150) / 2, y: (250 - 150) / 2, width: 150, height: 150)
 
     let cornerSize = CGSize(width: 44, height: 44)
@@ -52,8 +54,12 @@ struct PathShapeView: View {
     )
 
     PathShapeView(
-        viewBox: .init(origin: .zero, size: .init(width: 250, height: 250)),
+        viewBox: viewBox,
         style: style,
-        path: path,
+        path: .step_08,
     )
+    .scaleEffect(0.5)
+    .background {
+        Color.mint
+    }
 }
