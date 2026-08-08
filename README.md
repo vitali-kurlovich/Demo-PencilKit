@@ -28,6 +28,13 @@
 
 <img width="600" height="467.5" alt="Image_Fill_lesson" src="https://github.com/user-attachments/assets/6a78cd4b-363b-45b3-8c76-51dc17e17507" />
 
+---
+
+  https://github.com/user-attachments/assets/cfcec798-0beb-44a1-836f-feb6e4571f6c  
+
+[SketchEditorScreen.swift](https://github.com/vitali-kurlovich/Demo-PencilKit/blob/main/DemoPencilKit/DemoPencilKit/PencilKitSwiftUI/Editor/SketchEditorScreen.swift)
+
+---
 
 При закрашивании областей рисунка пользователю нужно показать что конкретно он будет закрашивать, цвет закраски и границы закраски
 
@@ -48,6 +55,9 @@
 Шейдер будет писать в разные цветовые каналы соответствующие значения
 
 <img width="337.5" height="600" alt="Shader" src="https://github.com/user-attachments/assets/13d5d31e-38a5-4d73-b78b-fba7b32c8cbd" />
+
+
+При сопоставлении цвета, функция сравнения должна учитывать диапазон цвета, поскольку добиться 100% совпадения цвета может быть проблемой для пользователя. Скорее всего для реализации функции сопоставлении цвета нужно будет учитывать хроматическую и яркостную составляющую. Для этого можно использовать Lab-color space. При сравнении отдельно сравнивать Lightness-компонент, а цвет представлять в виде 2d-вектора (a,b) и при сравнении использовать скалярное произведение с вектором из ab-каналов эталона
 
 
 
