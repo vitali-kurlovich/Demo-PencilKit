@@ -1,7 +1,4 @@
 //
-//  CGFloat+mix.swift
-//  DemoPencilKit
-//
 //  Created by Kurlovich Vitali on 8/7/26.
 //
 

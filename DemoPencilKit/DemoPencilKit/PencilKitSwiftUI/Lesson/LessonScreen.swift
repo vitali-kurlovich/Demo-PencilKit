@@ -16,8 +16,9 @@ struct LessonScreen: View {
     var model = LessonModel()
 
     var body: some View {
-        PKCanvas($model.drawing)
-            .toolPicker(displayMode: .visible)
+        PKCanvas($model.drawing).onTool(using: { _ in
+        })
+        .toolPicker(displayMode: .visible)
     }
 }
 

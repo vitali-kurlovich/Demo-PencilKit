@@ -122,23 +122,3 @@ private extension CharacterSet {
 
     static let svgCommands = CharacterSet(charactersIn: "MmLlHhVvCcSsQqTtAaZz")
 }
-
-// import SwiftUI
-//
-// #Preview {
-//    Path(path: """
-//
-//    M 10,10 h 10
-//           m  0,10 h 10
-//           m  0,10 h 10
-//           M 40,20 h 10
-//           m  0,10 h 10
-//           m  0,10 h 10
-//           m  0,10 h 10
-//           M 50,50 h 10
-//           m-20,10 h 10
-//           m-20,10 h 10
-//           m-20,10 h 10 z
-//    """)
-//    .stroke(style: StrokeStyle(lineWidth: 1))
-// }
