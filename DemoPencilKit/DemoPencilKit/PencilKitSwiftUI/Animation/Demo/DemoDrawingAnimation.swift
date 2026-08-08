@@ -53,16 +53,7 @@ struct DemoDrawingAnimation: View {
         }.overlay {
             if let lastStroke = stroke {
                 if options.contains(.showPath) {
-                    let cgPath = lastStroke.path.bezierRepresentation
-
-                    Path(cgPath).stroke(Color.blue, style: StrokeStyle(
-                        lineWidth: 4,
-                        lineCap: .round,
-                        lineJoin: .round,
-                        miterLimit: 10,
-                        dash: [15, 15],
-                        dashPhase: 0,
-                    ))
+                    StrokePath(stroke: lastStroke, phase: phase)
                 }
 
                 if options.contains(.showTarget) {
