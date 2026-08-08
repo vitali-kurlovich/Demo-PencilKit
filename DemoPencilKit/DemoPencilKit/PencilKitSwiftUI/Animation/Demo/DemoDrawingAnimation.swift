@@ -75,10 +75,7 @@ struct DemoDrawingAnimation: View {
 }
 
 #Preview {
-    @Previewable @State
-    var path = NavigationPath()
-
-    NavigationStack(path: $path) {
+    NavigationStack {
         DemoDrawingAnimation()
     }
 }
