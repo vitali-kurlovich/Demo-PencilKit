@@ -103,7 +103,7 @@ https://github.com/user-attachments/assets/cb20b750-41b3-4a48-8da6-3d1aebf4565c
 
 Урок состоит из следующих компонентов:
  - Метаданные: название урока, описание, мининатюра урока
- - Описание каждого из шагов урока включающие: название, детальное текстовое описание, графические данные
+ - Описание каждого из шагов урока включающие: название, детальное текстовое описание, графические данные, цвета
 
 Данные урока представляют собой текстовые и графические данные. 
 
@@ -118,6 +118,9 @@ https://github.com/user-attachments/assets/cb20b750-41b3-4a48-8da6-3d1aebf4565c
 
 Пример данных для урока можно посмотреть в [Arts/Lesson Rabbit Decompose](https://github.com/vitali-kurlovich/Demo-PencilKit/tree/main/Arts/Lesson%20Rabbit%20Decompose). Даже без оптимизации все графические данные в zip-архиве занимают ~100k
 
+### Модель данных урока
+
+[![](https://img.plantuml.biz/plantuml/svg/TL9DJyCm3BtdL_W8JFi3FKs0TXeIKdT37AB4MoFIf4fSneVuxpXUcnM9zM3Pxxqy-qdTPDA9njuhZmS2Yf3SiIEmBg4X5uDInkkSuGb9MqqQljKATj5exxxGjfHSE08vylWFRZ6Rv0Rn-L6prJv6to8HAxBOFKGV4vXIUThwg0bEpb8dZp2CFJmcVTf_3iXwuE_Wl9ScKuflM7Hdxw9hEot25Jnhwc3Wmdrr82wN1otX8DeQi9yQnlvSIZnCFkSDkTH5hXtcp4clk35OThsyyiquv6a4CwQ4WKfV9FUy15pUkk1oLu607tHpEqz3mdUUP7EzfcbABhXRhsjIfOfhqymd23aVDd4bbE3Bg1Cd-QgZR55g2ddDjT8IKZY9Ll55tWkhDXXi-Gb_0G00)](https://editor.plantuml.com/uml/TL9DJyCm3BtdL_W8JFi3FKs0TXeIKdT37AB4MoFIf4fSneVuxpXUcnM9zM3Pxxqy-qdTPDA9njuhZmS2Yf3SiIEmBg4X5uDInkkSuGb9MqqQljKATj5exxxGjfHSE08vylWFRZ6Rv0Rn-L6prJv6to8HAxBOFKGV4vXIUThwg0bEpb8dZp2CFJmcVTf_3iXwuE_Wl9ScKuflM7Hdxw9hEot25Jnhwc3Wmdrr82wN1otX8DeQi9yQnlvSIZnCFkSDkTH5hXtcp4clk35OThsyyiquv6a4CwQ4WKfV9FUy15pUkk1oLu607tHpEqz3mdUUP7EzfcbABhXRhsjIfOfhqymd23aVDd4bbE3Bg1Cd-QgZR55g2ddDjT8IKZY9Ll55tWkhDXXi-Gb_0G00)
 
 
 
