@@ -7,11 +7,16 @@ class Metadata {
 }
 
 
+struct Estimate {
++ value: Int
++ Bool isSatisfies
+}
+
+
 class ToolSettings {
 + Color color
 + Float width
 }
-
 
 enum DrawType {
     fill
@@ -27,6 +32,8 @@ class Step {
 + Metadata metadata
 + ToolSettings tool
 + DrawShape shape
+
++ estimate(CanvasSnapshot snapshot)
 }
 
 
@@ -49,6 +56,7 @@ DrawShape::type *-- DrawType
 Step::metadata *-- Metadata
 Step::tool *-- ToolSettings
 Step::shape *-- DrawShape
+Step::estimate *-- Estimate
 
 Lession::metadata *-- Metadata
 Lession::steps *-- Step
