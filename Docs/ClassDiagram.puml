@@ -37,10 +37,10 @@ class Step {
 }
 
 
-class Lession {
+class Lesson {
 + Metadata metadata
 
-+ Step[] steps
+# Step[] steps
 + Step currentStep
 
 + Bool isFinish
