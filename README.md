@@ -205,3 +205,7 @@ https://github.com/user-attachments/assets/cb20b750-41b3-4a48-8da6-3d1aebf4565c
 
 В папке [Arts](https://github.com/vitali-kurlovich/Demo-PencilKit/tree/main/Arts) содержаться исходные и обработанные файлы примера в Demo
 
+ - Исходное изображение [/Arts/Source/Rebbit.png](https://github.com/vitali-kurlovich/Demo-PencilKit/blob/main/Arts/Source/Rebbit.png) в формате png была векторизовано в svg-формат
+[/Arts/Source/Rebbit.svg](https://github.com/vitali-kurlovich/Demo-PencilKit/blob/main/Arts/Source/Rebbit.svg).
+
+
