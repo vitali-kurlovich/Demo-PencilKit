@@ -1,0 +1,57 @@
+@startuml
+left to right direction
+
+class Metadata {
++ LocalizedString title
++ LocalizedString description
+}
+
+
+class ToolSettings {
++ Color color
++ Float width
+}
+
+
+enum DrawType {
+    fill
+    stroke
+}
+
+class DrawShape {
++ Path path
++ DrawType type
+}
+
+class Step {
++ Metadata metadata
++ ToolSettings tool
++ DrawShape shape
+}
+
+
+class Lession {
++ Metadata metadata
+
++ Step[] steps
++ Step currentStep
+
++ Bool isFinish
+
++ Bool next()
++ Bool prev()
+
+}
+
+
+DrawShape::type *-- DrawType
+
+Step::metadata *-- Metadata
+Step::tool *-- ToolSettings
+Step::shape *-- DrawShape
+
+Lession::metadata *-- Metadata
+Lession::steps *-- Step
+Lession::currentStep *-- Step
+
+@enduml
