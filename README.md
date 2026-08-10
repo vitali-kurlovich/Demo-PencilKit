@@ -208,4 +208,13 @@ https://github.com/user-attachments/assets/cb20b750-41b3-4a48-8da6-3d1aebf4565c
  - Исходное изображение [/Arts/Source/Rebbit.png](https://github.com/vitali-kurlovich/Demo-PencilKit/blob/main/Arts/Source/Rebbit.png) в формате png была векторизовано в svg-формат
 [/Arts/Source/Rebbit.svg](https://github.com/vitali-kurlovich/Demo-PencilKit/blob/main/Arts/Source/Rebbit.svg).
 
+- После вектризации изображение подверглось оптимизации (удалены мелкие детали, упрощены формы) [Arts/Lesson Rabbit/Final.svg](https://github.com/vitali-kurlovich/Demo-PencilKit/blob/main/Arts/Lesson%20Rabbit/Final.svg)
+
+- Далее векторное изображение было преобразованно в изображения являющиеся отдельными результатами каждого шага: [Arts/Lesson Rabbit](https://github.com/vitali-kurlovich/Demo-PencilKit/tree/main/Arts/Lesson%20Rabbit)
+
+- После, из изображений каждого шага, были удалены фигуры относящиеся к предыдущим шагам: [Arts/Lesson Rabbit Decompose](https://github.com/vitali-kurlovich/Demo-PencilKit/tree/main/Arts/Lesson%20Rabbit%20Decompose)
+
+-  Cделан отдельный файл с криывми обводки [Arts/Lesson Rabbit Decompose/Strokes.svg](https://github.com/vitali-kurlovich/Demo-PencilKit/blob/main/Arts/Lesson%20Rabbit%20Decompose/Strokes.svg)
+
+После, необходимо сделать файл шагов и перенесту в него необходимые данные из svg-файлоа (описание фигур, цвета, метаданные), это может быть сделано отдельным инструментом
 
