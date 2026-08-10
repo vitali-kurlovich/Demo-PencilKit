@@ -36,28 +36,11 @@
 
 ---
 
-При закрашивании областей рисунка пользователю нужно показать что конкретно он будет закрашивать, цвет закраски и границы закраски
-
-
 <img width="1124" height="610" alt="Fill_Interaction" src="https://github.com/user-attachments/assets/07e598a3-e084-437a-83c9-21caa6454eb5" />
 
-Для оценки насколько хорошо пользователь справился с задачей нужно сравнивать несколько картинок:
- - Нарисованное пользователем изображение
- - Эталонное изображение (рис. 4)
- - Изображение области закраски на данном шаге (рис. 5)
-   
-<img width="1083" height="620" alt="Fill_Mesurment" src="https://github.com/user-attachments/assets/21c9da72-2ac1-4f11-93aa-c832ea93e86a" />
 
-При оценке следует учитывать площадь попадающую в область закраски (обозначена синим ), выходящую за область закраски (обозначена красным), и недозакрашеную область (обозначена синим). 
+При закрашивании областей рисунка пользователю нужно показать, что конкретно он будет закрашивать - цвет закраски и границы закраски
 
-
-Для реализации алгоритма оценки разумно использовать GPU через [CoreImage](https://developer.apple.com/documentation/coreimage) и реализацию [Custom Kernel](https://developer.apple.com/documentation/coreimage/writing-custom-kernels) на [Metal Shading Language](https://developer.apple.com/metal/Metal-Shading-Language-Specification.pdf)
-Шейдер будет писать в разные цветовые каналы соответствующие значения
-
-<img width="337.5" height="600" alt="Shader" src="https://github.com/user-attachments/assets/13d5d31e-38a5-4d73-b78b-fba7b32c8cbd" />
-
-
-При сопоставлении цвета, функция сравнения должна учитывать диапазон цвета, поскольку добиться 100% совпадения цвета может быть проблемой для пользователя. Скорее всего для реализации функции сопоставлении цвета нужно будет учитывать хроматическую и яркостную составляющую. Для этого можно использовать Lab-color space. При сравнении отдельно сравнивать Lightness-компонент, а цвет представлять в виде 2d-вектора (a,b) и при сравнении использовать скалярное произведение с вектором из ab-каналов эталона
 
 
 
@@ -115,5 +98,55 @@ https://github.com/user-attachments/assets/cb20b750-41b3-4a48-8da6-3d1aebf4565c
    - Загружать уроки динамически, по ходу использования программы и удаление рание пройденых, можно использовать [Background Assets](https://developer.apple.com/documentation/backgroundassets)
 
 # Технические детали
+
+## Урок
+
+Урок состоит из следующих компонентов:
+ - Метаданные: название урока, описание, мининатюра урока
+ - Описание каждого из шагов урока включающие: название, детальное текстовое описание, графические данные, цвета
+
+Данные урока представляют собой текстовые и графические данные. 
+
+Желательно для текстовых данных реализовать поддержку разных локализаций.
+Графические данные могут быть представлены в виже растрового либо векторного формата.
+
+### Растровые форматы
+Главным достоинством растрового формата является простота интеграции в приложение, поскольку на уровне операционной системы поддержвается как множество форматов, так и простая реализация программной отрисовки. Растровые изображения обладают поддержкой высокой детализации, но для данного приложения это не даёт никаких приемуществ.
+
+### Векторные форматы
+Векторееые форматы предствалены значительно меньшим разнообразием и плохой поддержкой со стороны операционной системы (для iOS поддерживается PDF и несколько внутренниих форматов, например Symbols. svg-формат преобразуется в растр при сборке приложения). Несмотря на ряд технических сложностей, векторный формат выглядит наиболее подходящим. Главное приемущество векторного формата это возможность реализовать параметрическую отрисовку (у фигуры можно задать цвет и обводку) и независимость от разрешения изображения.
+
+Пример данных для урока можно посмотреть в [Arts/Lesson Rabbit Decompose](https://github.com/vitali-kurlovich/Demo-PencilKit/tree/main/Arts/Lesson%20Rabbit%20Decompose). Даже без оптимизации все графические данные в zip-архиве занимают ~100k
+
+### Модель данных урока
+
+[![](https://img.plantuml.biz/plantuml/svg/TL9DJyCm3BtdL_W8JFi3FKs0TXeIKdT37AB4MoFIf4fSneVuxpXUcnM9zM3Pxxqy-qdTPDA9njuhZmS2Yf3SiIEmBg4X5uDInkkSuGb9MqqQljKATj5exxxGjfHSE08vylWFRZ6Rv0Rn-L6prJv6to8HAxBOFKGV4vXIUThwg0bEpb8dZp2CFJmcVTf_3iXwuE_Wl9ScKuflM7Hdxw9hEot25Jnhwc3Wmdrr82wN1otX8DeQi9yQnlvSIZnCFkSDkTH5hXtcp4clk35OThsyyiquv6a4CwQ4WKfV9FUy15pUkk1oLu607tHpEqz3mdUUP7EzfcbABhXRhsjIfOfhqymd23aVDd4bbE3Bg1Cd-QgZR55g2ddDjT8IKZY9Ll55tWkhDXXi-Gb_0G00)](https://editor.plantuml.com/uml/TL9DJyCm3BtdL_W8JFi3FKs0TXeIKdT37AB4MoFIf4fSneVuxpXUcnM9zM3Pxxqy-qdTPDA9njuhZmS2Yf3SiIEmBg4X5uDInkkSuGb9MqqQljKATj5exxxGjfHSE08vylWFRZ6Rv0Rn-L6prJv6to8HAxBOFKGV4vXIUThwg0bEpb8dZp2CFJmcVTf_3iXwuE_Wl9ScKuflM7Hdxw9hEot25Jnhwc3Wmdrr82wN1otX8DeQi9yQnlvSIZnCFkSDkTH5hXtcp4clk35OThsyyiquv6a4CwQ4WKfV9FUy15pUkk1oLu607tHpEqz3mdUUP7EzfcbABhXRhsjIfOfhqymd23aVDd4bbE3Bg1Cd-QgZR55g2ddDjT8IKZY9Ll55tWkhDXXi-Gb_0G00)
+
+
+
+## Закраска
+
+
+Для оценки насколько хорошо пользователь справился с задачей нужно сравнивать несколько картинок:
+ - Нарисованное пользователем изображение
+ - Эталонное изображение (рис. 4)
+ - Изображение области закраски на данном шаге (рис. 5)
+   
+<img width="1083" height="620" alt="Fill_Mesurment" src="https://github.com/user-attachments/assets/21c9da72-2ac1-4f11-93aa-c832ea93e86a" />
+
+При оценке следует учитывать площадь попадающую в область закраски (обозначена синим ), выходящую за область закраски (обозначена красным), и недозакрашеную область (обозначена синим). 
+
+
+Для реализации алгоритма оценки разумно использовать GPU через [CoreImage](https://developer.apple.com/documentation/coreimage) и реализацию [Custom Kernel](https://developer.apple.com/documentation/coreimage/writing-custom-kernels) на [Metal Shading Language](https://developer.apple.com/metal/Metal-Shading-Language-Specification.pdf)
+Шейдер будет писать в разные цветовые каналы соответствующие значения
+
+<img width="337.5" height="600" alt="Shader" src="https://github.com/user-attachments/assets/13d5d31e-38a5-4d73-b78b-fba7b32c8cbd" />
+
+
+При сопоставлении цвета, функция сравнения должна учитывать диапазон цвета, поскольку добиться 100% совпадения цвета может быть проблемой для пользователя. Скорее всего для реализации функции сопоставлении цвета нужно будет учитывать хроматическую и яркостную составляющую. Для этого можно использовать Lab-color space. При сравнении отдельно сравнивать Lightness-компонент, а цвет представлять в виде 2d-вектора (a,b) и при сравнении использовать скалярное произведение с вектором из ab-каналов эталона
+
+
+
+
 
 
