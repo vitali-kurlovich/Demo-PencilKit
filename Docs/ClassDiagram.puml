@@ -39,8 +39,8 @@ class Step {
 
 class Lesson {
 + Metadata metadata
-
 # Step[] steps
+
 + Step currentStep
 
 + Bool isFinish
@@ -58,8 +58,8 @@ Step::tool *-- ToolSettings
 Step::shape *-- DrawShape
 Step::estimate *-- Estimate
 
-Lession::metadata *-- Metadata
-Lession::steps *-- Step
-Lession::currentStep *-- Step
+Lesson::metadata *-- Metadata
+Lesson::steps *-- Step
+Lesson::currentStep *-- Step
 
 @enduml
