@@ -1,0 +1,5 @@
+ArtWorkout is a graphics-heavy app and we're looking for someone with CG experience. Describe your experience working with computer graphics.
+
+Несколько лет профессионально занимался 3D-графикой, включая полигональное моделирование ( Autodesk Maya), рендеринг ( Mental Ray, V-Ray ) и компоузинг (Eyeon Fusion). Организовал небольшую команду для работы над 3D проектами и вернулся к программированию. Разрабатывал плагины и системы автоматизации для PhotoShop. Были проекты связаные с интерактивной 3D-графикой (Virtools), там занимался всем и сразу: моделирование, текстурирование, оптимизация моделей, скриптинг и разработка GPU шейдеров на HLSL. Есть опыт использования Unity 3D.
+
+Под iOS реализовывал эффекты постобработки на OpenGL ES и GLSL. Есть опыт работы c Metal Shading Language, в основном эффекты для UI.
